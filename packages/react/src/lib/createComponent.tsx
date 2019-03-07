@@ -40,10 +40,15 @@ const createComponent = <P extends ObjectOf<any> = any>({
   }
 
   const StardustComponent: CreateComponentReturnType<P> = (props): React.ReactElement<P> => {
+    // const { theme } = useFela()
+
+    // console.log('createComponent StardustComponent', theme)
+
     return renderComponent({
       className,
       defaultProps,
       displayName,
+      // theme: {},
       handledProps: _.keys(propTypes).concat(handledProps),
       props,
       state: {},
