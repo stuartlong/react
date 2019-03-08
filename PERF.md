@@ -1,5 +1,6 @@
-Print timings:
-_.mapValues(_.groupBy(performance.getEntriesByType('measure'), group => group.name.replace(/\d/g, '')), vals => _.sum(_.map(vals, 'duration')))
+# Conclusions / Changes
+
+- [ ] Do not console.error in renderComponent, costs ~200ms each log.  Wrap in dead code eliminated prod check. 
 
 # Perf Investigation
 

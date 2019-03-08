@@ -4,7 +4,8 @@ import { Provider, themes } from '@stardust-ui/react'
 
 import { mergeThemes } from 'src/lib'
 import { ThemeContext } from './context/ThemeContext'
-import Router from './routes'
+import * as perf from 'src/lib/perf'
+import ChatExample from 'docs/src/examples/components/Chat/Types/ChatExample.shorthand'
 
 interface AppState {
   themeName: string
@@ -32,8 +33,18 @@ class App extends React.Component<any, AppState> {
     }
   }
 
+  componentDidMount() {
+    perf.printTimings()
+  }
+
   render() {
     const { themeName } = this.state
+    const chatExample = <ChatExample />
+
+    if (perf.flags.SKIP_CONTEXT) {
+      return chatExample
+    }
+
     return (
       <ThemeContext.Provider value={this.state}>
         <Provider
@@ -54,7 +65,7 @@ class App extends React.Component<any, AppState> {
             ],
           })}
         >
-          <Router />
+          {chatExample}
         </Provider>
       </ThemeContext.Provider>
     )

@@ -22,7 +22,11 @@ const getClasses = perf.time(
     const componentParts: string[] = Object.keys(componentStyles)
 
     return componentParts.reduce((classes, partName) => {
-      classes[partName] = renderer.renderRule(callable(componentStyles[partName]), styleParam)
+      if (perf.flags.SKIP_FELA) {
+        classes[partName] = ''
+      } else {
+        classes[partName] = renderer.renderRule(callable(componentStyles[partName]), styleParam)
+      }
 
       return classes
     }, {})
