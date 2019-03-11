@@ -18,6 +18,8 @@ class App extends React.Component<any, AppState> {
   constructor(props) {
     super(props)
 
+    window.componentCount = { TOTAL: 0 }
+
     this.changeTheme = (event, data) => {
       const themeName = _.camelCase(data.value)
       this.setState({

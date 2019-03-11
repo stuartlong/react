@@ -32,6 +32,10 @@ const Box: CreateComponentReturnType<ReactProps<BoxProps>> = createComponent<Box
     const { ElementType, classes, unhandledProps } = config
     const { children, content } = props
 
+    // TODO: Heads up!  This assumes a single renderm, we're trying to count "mount"...
+    window.componentCount.TOTAL++
+    window.componentCount.Box = (window.componentCount.Box || 0) + 1
+
     return (
       <ElementType
         {...rtlTextContainer.getAttributes({ forElements: [children, content] })}

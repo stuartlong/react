@@ -76,6 +76,11 @@ class Provider extends React.Component<ProviderProps> {
     return Provider._topLevelFelaRenderer
   }
 
+  componentDidMount() {
+    const { theme } = this.props
+    updateCachedRemSize(theme.siteVariables.htmlFontSize)
+  }
+
   renderStaticStyles = (mergedTheme: ThemePrepared) => {
     // RTL WARNING
     // This function sets static styles which are global and renderer agnostic.

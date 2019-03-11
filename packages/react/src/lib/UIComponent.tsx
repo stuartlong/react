@@ -39,6 +39,10 @@ class UIComponent<P, S = {}> extends React.Component<P, S> {
       }
     }
 
+    window.componentCount.TOTAL++
+    window.componentCount[this.childClass.displayName] =
+      (window.componentCount[this.childClass.displayName] || 0) + 1
+
     this.renderComponent = this.renderComponent.bind(this)
   }
 

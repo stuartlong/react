@@ -1,6 +1,54 @@
+!! DUE TO DEV MODE PERFORMANCE ISSUES, ALL NUMBERS REPORTED ARE WITH FELA RENDERER DEV_MODE FALSE !!
+
 # Conclusions / Changes
 
-- [ ] Do not console.error in renderComponent, costs ~200ms each log.  Wrap in dead code eliminated prod check. 
+- [ ] Do not console.error in renderComponent, costs ~200ms each log.  Wrap in dead code eliminated prod check.
+
+## Skipping fela
+
+If we modify getClasses to return empty strings, avoiding all calls into fela's internals for generating CSS and writing to the DOM, these are the timings we get:
+
+~175ms Chat 30 msgs
+
+| function                      | time     |
+|-------------------------------|----------|
+| renderComponent               | 123.295  |
+| mergeThemes                   | 27.359   |
+| mergeThemeStyles              | 17.080   |
+| mergeComponentStyles          | 10.725   |
+| getClasses                    | 3.260    |
+| getElementType                | 2.909    |
+| mergeComponentVariables       | 2.739    |
+| mergeSiteVariables            | 1.994    |
+| mergeStyles                   | 2.135    |
+| mergeThemeVariables           | 3.310    |
+| (fela) renderer.renderStatic  | 3.039    |
+| (fela) renderer.renderFont    | 0.790    |
+| mergeIcons                    | 0.479    |
+| mergeAnimations               | 0.369    |
+| mergeFontFaces                | 0.269    |
+| (fela) renderer._emitChange   | 0.210    |
+| mergeRTL                      | 0.195    |
+| mergeStaticStyles             | 0.195    |
+| (fela) renderer.subscribe     | 0.075    |
+
+# Number of components
+
+The shear number of components times the mounting time seems to be a primary cause of first load issues.
+
+| Time  | Ea    |Components | Box | Text | Description                                                       |
+|-------|-------|-----------|-----|------|-------------------------------------------------------------------|
+| 17    | 5.6   | 3         | 0   | 0    | Chat with single "Today" divider                                  |
+| 23    | 3.3   | 7         | 2   | 2    | Chat with single text message that is "mine"                      | 
+| 28    | 3.1   | 9         | 3   | 2    | Chat with single text message from other with avatar              | 
+| 60    | 1.8   | 33        | 8   | 2    | Chat 1 item, reaction menu, 5 items, 3 shown on hover             | 
+| 675   | 0.7   | 961       | 240 | 60   | ^ 30 items                                                        | 
+| 45    | 1.4   | 33        | 8   | 2    | ^ re-render / forceUpdate                                         |
+| 45    | 1.4   | 33        | 8   | 2    | ^ skip fela                                                       |
+| 250   | 1.09  | 229       | 66  | 54   | Chat with 30 items (text messages, few dividers, no reactions)    |
+
+>Because the most prevalent component is Box, it is listed separately.
+>Text is included for similar reasons.
 
 # Perf Investigation
 
@@ -16,32 +64,6 @@ For each component:
 ## Baseline HTML
 
 3 - 4ms per HTML parse, required two HTML parse passes... not sure why
-
-## Skipping fela
-
-If we modify getClasses to return empty strings, avoiding all calls into fela's internals for generating CSS and writing to the DOM, these are the timings we get:
-
-~175ms Chat 30 msgs
-
-renderComponent               123.295
-mergeThemes                   27.359
-mergeThemeStyles              17.080
-mergeComponentStyles          10.725
-getClasses                    3.260
-getElementType                2.909
-mergeComponentVariables       2.739
-mergeSiteVariables            1.994
-mergeStyles                   2.135
-mergeThemeVariables           3.310
-(fela) renderer.renderStatic  3.039
-(fela) renderer.renderFont    0.790
-mergeIcons                    0.479
-mergeAnimations               0.369
-mergeFontFaces                0.269
-(fela) renderer._emitChange   0.210
-mergeRTL                      0.195
-mergeStaticStyles             0.195
-(fela) renderer.subscribe     0.075
 
 ## Use case
 

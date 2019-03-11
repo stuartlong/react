@@ -144,4 +144,5 @@ export const printTimings = () => {
   console.table(flags)
   console.table(sortedOurObject)
   console.table(sortedReactObject)
+  console.table(_.fromPairs(_.sortBy(_.toPairs(window.componentCount), pair => -pair[1])))
 }

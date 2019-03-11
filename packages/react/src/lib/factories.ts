@@ -10,6 +10,8 @@ import {
   ShorthandRenderer,
 } from '../types'
 import { mergeStyles } from './mergeThemes'
+import * as perf from './perf'
+import { time } from './perf'
 
 type HTMLTag = 'iframe' | 'img' | 'input'
 type ShorthandProp = 'children' | 'src' | 'type'
@@ -92,141 +94,151 @@ export function createShorthandFactory<TInstance extends React.Component>(
   mappedProp?: keyof PropsOf<TInstance>,
 )
 export function createShorthandFactory(Component: React.ReactType, mappedProp?: string) {
+  const timeEnd = perf.timeStart('createShorthandFactory')
   if (typeof Component !== 'function' && typeof Component !== 'string') {
     throw new Error('createShorthandFactory() Component must be a string or function.')
   }
 
-  return (val, options: CreateShorthandOptions) =>
+  const ret = (val, options: CreateShorthandOptions) =>
     createShorthand(Component, mappedProp as string, val, options)
+
+  timeEnd()
+  return ret
 }
 
 // ============================================================
 // Private Utils
 // ============================================================
 
-function createShorthandFromValue(
-  Component: React.ReactType,
-  mappedProp?: string,
-  value?: ShorthandValue,
-  options?: CreateShorthandOptions,
-) {
-  if (typeof Component !== 'function' && typeof Component !== 'string') {
-    throw new Error('createShorthand() Component must be a string or function.')
-  }
-  // short circuit noop values
-  const valIsNoop = _.isNil(value) || typeof value === 'boolean'
-  if (valIsNoop && !options.render) return null
-
-  const valIsPrimitive = typeof value === 'string' || typeof value === 'number'
-  const valIsPropsObject = _.isPlainObject(value)
-  const valIsReactElement = React.isValidElement(value)
-
-  // unhandled type warning
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    !valIsPrimitive &&
-    !valIsPropsObject &&
-    !valIsReactElement &&
-    !valIsNoop
+const createShorthandFromValue = perf.time(
+  'createShorthandFromValue',
+  function createShorthandFromValue(
+    Component: React.ReactType,
+    mappedProp?: string,
+    value?: ShorthandValue,
+    options?: CreateShorthandOptions,
   ) {
-    console.error(
-      [
-        'Shorthand value must be a string|number|object|ReactElements.',
-        ' Use null|undefined|boolean for none.',
-        ` Received: ${value}`,
-      ].join(''),
-    )
-  }
+    if (typeof Component !== 'function' && typeof Component !== 'string') {
+      throw new Error('createShorthand() Component must be a string or function.')
+    }
+    // short circuit noop values
+    const valIsNoop = _.isNil(value) || typeof value === 'boolean'
+    if (valIsNoop && !options.render) return null
 
-  // ----------------------------------------
-  // Build up props
-  // ----------------------------------------
-  const { defaultProps = {} } = options
+    const valIsPrimitive = typeof value === 'string' || typeof value === 'number'
+    const valIsPropsObject = _.isPlainObject(value)
+    const valIsReactElement = React.isValidElement(value)
 
-  // User's props
-  const usersProps =
-    (valIsReactElement && (value as React.ReactElement<Props>).props) ||
-    (valIsPropsObject && (value as Props)) ||
-    {}
+    // unhandled type warning
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      !valIsPrimitive &&
+      !valIsPropsObject &&
+      !valIsReactElement &&
+      !valIsNoop
+    ) {
+      console.error(
+        [
+          'Shorthand value must be a string|number|object|ReactElements.',
+          ' Use null|undefined|boolean for none.',
+          ` Received: ${value}`,
+        ].join(''),
+      )
+    }
 
-  // Override props
-  let { overrideProps } = options
-  overrideProps =
-    typeof overrideProps === 'function'
-      ? (overrideProps as Function)({ ...defaultProps, ...usersProps })
-      : overrideProps || {}
+    // ----------------------------------------
+    // Build up props
+    // ----------------------------------------
+    const { defaultProps = {} } = options
 
-  // Merge props
-  const props = { ...defaultProps, ...usersProps, ...overrideProps }
+    // User's props
+    const usersProps =
+      (valIsReactElement && (value as React.ReactElement<Props>).props) ||
+      (valIsPropsObject && (value as Props)) ||
+      {}
 
-  // Map prop for primitive value
-  if (valIsPrimitive) {
-    props[mappedProps[overrideProps.as || defaultProps.as] || mappedProp || 'children'] = value
-  }
+    // Override props
+    let { overrideProps } = options
+    overrideProps =
+      typeof overrideProps === 'function'
+        ? (overrideProps as Function)({ ...defaultProps, ...usersProps })
+        : overrideProps || {}
 
-  // Merge className
-  if (defaultProps.className || overrideProps.className || usersProps.className) {
-    const mergedClassesNames = cx(
-      defaultProps.className,
-      overrideProps.className,
-      usersProps.className,
-    )
-    props.className = _.uniq(mergedClassesNames.split(' ')).join(' ')
-  }
+    // Merge props
+    const props = { ...defaultProps, ...usersProps, ...overrideProps }
 
-  // Merge style
-  if (defaultProps.style || overrideProps.style || usersProps.style) {
-    props.style = { ...defaultProps.style, ...usersProps.style, ...overrideProps.style }
-  }
+    // Map prop for primitive value
+    if (valIsPrimitive) {
+      props[mappedProps[overrideProps.as || defaultProps.as] || mappedProp || 'children'] = value
+    }
 
-  // Merge styles
-  if (defaultProps.styles || overrideProps.styles || usersProps.styles) {
-    props.styles = mergeStyles(defaultProps.styles, usersProps.styles, overrideProps.styles)
-  }
+    // Merge className
+    if (defaultProps.className || overrideProps.className || usersProps.className) {
+      const mergedClassesNames = cx(
+        defaultProps.className,
+        overrideProps.className,
+        usersProps.className,
+      )
+      props.className = _.uniq(mergedClassesNames.split(' ')).join(' ')
+    }
 
-  // ----------------------------------------
-  // Get key
-  // ----------------------------------------
-  const { generateKey = true } = options
+    // Merge style
+    if (defaultProps.style || overrideProps.style || usersProps.style) {
+      props.style = { ...defaultProps.style, ...usersProps.style, ...overrideProps.style }
+    }
 
-  // Use key or generate key
-  if (generateKey && _.isNil(props.key) && valIsPrimitive) {
-    // use string/number shorthand values as the key
-    props.key = value
-  }
+    // Merge styles
+    if (defaultProps.styles || overrideProps.styles || usersProps.styles) {
+      props.styles = mergeStyles(defaultProps.styles, usersProps.styles, overrideProps.styles)
+    }
 
-  // Remove the kind prop from the props object
-  delete props.kind
+    // ----------------------------------------
+    // Get key
+    // ----------------------------------------
+    const { generateKey = true } = options
 
-  // ----------------------------------------
-  // Create Element
-  // ----------------------------------------
-  const { render } = options
-  if (render) {
-    return render(Component, props)
-  }
+    // Use key or generate key
+    if (generateKey && _.isNil(props.key) && valIsPrimitive) {
+      // use string/number shorthand values as the key
+      props.key = value
+    }
 
-  // Clone ReactElements
-  if (valIsReactElement) return React.cloneElement(value as React.ReactElement<Props>, props)
+    // Remove the kind prop from the props object
+    delete props.kind
 
-  // Create ReactElements from built up props
-  if (valIsPrimitive || valIsPropsObject) return React.createElement(Component, props)
+    // ----------------------------------------
+    // Create Element
+    // ----------------------------------------
+    const { render } = options
+    if (render) {
+      return render(Component, props)
+    }
 
-  return null
-}
+    // Clone ReactElements
+    if (valIsReactElement) return React.cloneElement(value as React.ReactElement<Props>, props)
 
-function createShorthandFromRenderCallback(
-  Component: React.ReactType,
-  renderCallback: ShorthandRenderCallback,
-  mappedProp?: string,
-  options?: CreateShorthandOptions,
-) {
-  const render: ShorthandRenderer = (shorthandValue, renderTree) => {
-    return createShorthandFromValue(Component, mappedProp, shorthandValue, {
-      ...options,
-      ...(renderTree && { render: renderTree }),
-    })
-  }
+    // Create ReactElements from built up props
+    if (valIsPrimitive || valIsPropsObject) return React.createElement(Component, props)
 
-  return renderCallback(render)
-}
+    return null
+  },
+)
+
+const createShorthandFromRenderCallback = perf.time(
+  'createShorthandFromRenderCallback',
+  function createShorthandFromRenderCallback(
+    Component: React.ReactType,
+    renderCallback: ShorthandRenderCallback,
+    mappedProp?: string,
+    options?: CreateShorthandOptions,
+  ) {
+    const render: ShorthandRenderer = (shorthandValue, renderTree) => {
+      return createShorthandFromValue(Component, mappedProp, shorthandValue, {
+        ...options,
+        ...(renderTree && { render: renderTree }),
+      })
+    }
+
+    return renderCallback(render)
+  },
+)
