@@ -3,6 +3,7 @@ import * as _ from 'lodash'
 import renderComponent, { RenderResultConfig } from './renderComponent'
 import { AccessibilityActionHandlers } from './accessibility/types'
 import { FocusZone } from './accessibility/FocusZone'
+import { isBrowser } from 'src/lib'
 
 // TODO @Bugaa92: deprecated by createComponent.tsx
 class UIComponent<P, S = {}> extends React.Component<P, S> {
@@ -39,9 +40,11 @@ class UIComponent<P, S = {}> extends React.Component<P, S> {
       }
     }
 
-    window.componentCount.TOTAL++
-    window.componentCount[this.childClass.displayName] =
-      (window.componentCount[this.childClass.displayName] || 0) + 1
+    if (isBrowser()) {
+      window.componentCount.TOTAL++
+      window.componentCount[this.childClass.displayName] =
+        (window.componentCount[this.childClass.displayName] || 0) + 1
+    }
 
     this.renderComponent = this.renderComponent.bind(this)
   }

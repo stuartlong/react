@@ -14,10 +14,3 @@ const globalStyles: StaticStyleFunction = siteVars => ({
 })
 
 export default globalStyles
-
-
-const htmlFontSize = 10
-pxToRem(10, htmlFontSize) // Teams 1rem, 0.714rem...
-
-// ??
-pxToRem(14, htmlFontSize) // CSS in JS ThemeB 1rem, 1.4rem...

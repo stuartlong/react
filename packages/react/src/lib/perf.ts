@@ -1,4 +1,5 @@
 import * as _ from 'lodash'
+import isBrowser from './isBrowser'
 
 enum STYLE_BATCHING_STRATEGY {
   PER_PROPERTY = 'PER_PROPERTY',
@@ -66,34 +67,43 @@ const DEFAULT_FLAGS_DEV: PERF_FLAGS = {
   STYLE_BATCHING_STRATEGY: STYLE_BATCHING_STRATEGY.PER_PROPERTY,
 }
 
-const initialFlags: PERF_FLAGS = JSON.parse(localStorage.getItem('flags')) || DEFAULT_FLAGS_DEV
+const b = isBrowser()
+//////////////////////////////////////////////////////
+// god help us....
+const perfWindow: any = b ? window : {
+  localStorage: { setItem: () => null, getItem: () => null },
+}
+//////////////////////////////////////////////////////
+
+const initialFlags: PERF_FLAGS =
+  JSON.parse(perfWindow.localStorage.getItem('flags')) || DEFAULT_FLAGS_DEV
 
 const makeFlags = json => {
   const proxy = new Proxy(json, {
     set(target: PERF_FLAGS, p: PropertyKey, value: any, receiver: any): boolean {
       const ret = Reflect.set(target, p, value, receiver)
-      localStorage.setItem('flags', JSON.stringify(target, null, 2))
+      perfWindow.localStorage.setItem('flags', JSON.stringify(target, null, 2))
       location.reload()
       return ret
     },
   })
-  localStorage.setItem('flags', JSON.stringify(proxy, null, 2))
+  perfWindow.localStorage.setItem('flags', JSON.stringify(proxy, null, 2))
   return proxy
 }
 
 export const flags = makeFlags(initialFlags)
 
-window.flags = flags
-window.dev = () => {
-  window.flags = makeFlags(DEFAULT_FLAGS_DEV)
+perfWindow.flags = flags
+perfWindow.dev = () => {
+  perfWindow.flags = makeFlags(DEFAULT_FLAGS_DEV)
   location.reload()
 }
-window.prod = () => {
-  window.flags = makeFlags(DEFAULT_FLAGS_PROD)
+perfWindow.prod = () => {
+  perfWindow.flags = makeFlags(DEFAULT_FLAGS_PROD)
   location.reload()
 }
-window.prodNoFela = () => {
-  window.flags = makeFlags({ ...DEFAULT_FLAGS_PROD, SKIP_FELA: true })
+perfWindow.prodNoFela = () => {
+  perfWindow.flags = makeFlags({ ...DEFAULT_FLAGS_PROD, SKIP_FELA: true })
   location.reload()
 }
 
@@ -144,5 +154,5 @@ export const printTimings = () => {
   console.table(flags)
   console.table(sortedOurObject)
   console.table(sortedReactObject)
-  console.table(_.fromPairs(_.sortBy(_.toPairs(window.componentCount), pair => -pair[1])))
+  console.table(_.fromPairs(_.sortBy(_.toPairs(perfWindow.componentCount), pair => -pair[1])))
 }
