@@ -2,16 +2,37 @@ import * as _ from 'lodash'
 import isBrowser from './isBrowser'
 
 enum STYLE_BATCHING_STRATEGY {
+  // This is the default for fela's current implementation
+  // It does not batch, but calls insertRule for every property/value pair in the style object as they are processed
   PER_PROPERTY = 'PER_PROPERTY',
+
+  // This means insert rules once AFTER [fela] renderRule is done.
+  // This would be equivalent to writing styles to the head after the style object for each component "slot" is processed.
   PER_SLOT = 'PER_SLOT',
+
+  // This means insert rules once AFTER getClasses() is done.
+  // This would be equivalent to writing styles to the head after the style object for an entire component (all slots) is processed.
   PER_COMPONENT = 'PER_COMPONENT',
+
+  // This means insert rules once AFTER the application root has mounted.
+  // This is more of an experiment and baseline comparison.
   ENTIRE_TREE = 'ENTIRE_TREE',
 }
 
+// These are different ways to get processed style rules into the actual DOM node and CSSOM.  It does not concern batching.
 enum STYLE_NODE_UPDATE_STRATEGY {
+  // Don't update the DOM or CSSOM
   SKIP = 'SKIP',
+
+  // Call native browser CSSStyleSheet.insertRule() function (fela default when !renderer.devMode)
   INSERT_RULE = 'INSERT_RULE',
+
+  // Crazy idea to use @media all { ... } to write multiple rules at once.
+  // The browser's insertRule only supports writing one rule at a time. If any batching is done, a hack like this would have to be used.
   INSERT_RULE_MEDIA_QUERY_ALL = 'INSERT_RULE_MEDIA_QUERY_ALL',
+
+  // Another hack to enable batching, expected to be far less performant.
+  // Replace the actual style tag's textContent and let the browser apply the style change.
   TEXT_CONTENT = 'TEXT_CONTENT',
 }
 
@@ -39,11 +60,13 @@ type PERF_FLAGS = {
   SKIP_FOCUS_ZONE: boolean
 
   /**
+   * TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
    * Different strategies for batching
    */
   STYLE_BATCHING_STRATEGY: STYLE_BATCHING_STRATEGY
 
   /**
+   * TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
    * Different strategies for updating the DOM/CSSOM _after_ class names and styles are computed.
    */
   STYLE_NODE_UPDATE_STRATEGY: STYLE_NODE_UPDATE_STRATEGY
