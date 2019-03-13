@@ -85,15 +85,10 @@ export interface FileParser {
   ): ComponentDoc[]
 }
 
-const tsconfigDocs = require('../../../tsconfig.docs.json')
-
 const defaultOptions: ts.CompilerOptions = {
   jsx: ts.JsxEmit.React,
   module: ts.ModuleKind.CommonJS,
   target: ts.ScriptTarget.Latest,
-  lib: tsconfigDocs.lib,
-  paths: tsconfigDocs.paths,
-  typeRoots: tsconfigDocs.typeRoots
 }
 
 const reactComponentSymbolNames = [
