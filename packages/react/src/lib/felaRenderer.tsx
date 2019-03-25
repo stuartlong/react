@@ -6,6 +6,7 @@ import felaPluginPrefixer from 'fela-plugin-prefixer'
 import rtl from 'fela-plugin-rtl'
 
 import { Renderer } from '../themes/types'
+import * as perf from 'src/lib/perf'
 
 // Blacklist contains a list of classNames that are used by FontAwesome
 // https://fontawesome.com/how-to-use/on-the-web/referencing-icons/basic-use
@@ -16,21 +17,23 @@ const filterClassName = (className: string): boolean =>
 
 const createRendererConfig = (options: any = {}) => ({
   devMode: process.env.NODE_ENV !== 'production',
-  plugins: [
-    // is necessary to prevent accidental style typos
-    // from breaking ALL the styles on the page
-    felaSanitizeCss({
-      skip: ['content'],
-    }),
+  plugins: perf.flags.SKIP_FELA_PLUGINS
+    ? []
+    : [
+        // is necessary to prevent accidental style typos
+        // from breaking ALL the styles on the page
+        felaSanitizeCss({
+          skip: ['content'],
+        }),
 
-    felaPluginPlaceholderPrefixer(),
-    felaPluginPrefixer(),
+        felaPluginPlaceholderPrefixer(),
+        felaPluginPrefixer(),
 
-    // Heads up!
-    // This is required after fela-plugin-prefixer to resolve the array of fallback values prefixer produces.
-    felaPluginFallbackValue(),
-    ...(options.isRtl ? [rtl()] : []),
-  ],
+        // Heads up!
+        // This is required after fela-plugin-prefixer to resolve the array of fallback values prefixer produces.
+        felaPluginFallbackValue(),
+        ...(options.isRtl ? [rtl()] : []),
+      ],
   filterClassName,
   enhancers: [],
   ...(options.isRtl ? { selectorPrefix: 'rtl_' } : {}),
