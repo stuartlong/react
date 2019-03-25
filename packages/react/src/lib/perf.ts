@@ -93,9 +93,12 @@ const DEFAULT_FLAGS_DEV: PERF_FLAGS = {
 const b = isBrowser()
 //////////////////////////////////////////////////////
 // god help us....
-const perfWindow: any = b ? window : {
-  localStorage: { setItem: () => null, getItem: () => null },
-}
+const perfWindow: any = b
+  ? window
+  : {
+      localStorage: { setItem: () => null, getItem: () => null },
+      performance: { mark: () => null, measure: () => null },
+    }
 //////////////////////////////////////////////////////
 
 const initialFlags: PERF_FLAGS =
@@ -132,20 +135,20 @@ perfWindow.prodNoFela = () => {
 
 export const timeStart = function timeStart(id) {
   const uniqueId = _.uniqueId()
-  const markStart = id + '-start' + uniqueId
+  const markStart = `${id}-start${uniqueId}`
   const markEnd = markStart.replace('-start', '-end')
 
-  performance.mark(markStart)
+  perfWindow.performance.mark(markStart)
 
   return function timeEnd() {
-    performance.mark(markEnd)
-    performance.measure(id + uniqueId, markStart, markEnd)
+    perfWindow.performance.mark(markEnd)
+    perfWindow.performance.measure(id + uniqueId, markStart, markEnd)
   }
 }
 
 export const time = function time(id, fn) {
   let call = 0
-  return function(...args) {
+  return function (...args) {
     call++
     const timeEnd = timeStart(id + call)
     const res = fn(...args)
