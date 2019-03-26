@@ -3,68 +3,135 @@ import * as React from 'react'
 // @ts-ignore
 import { ThemeContext } from 'react-fela'
 
-const ContextConsumer: React.FunctionComponent<{ theme: ThemeInput }> = props => (
+const C: React.FunctionComponent<{ theme: ThemeInput }> = props => (
   <div>
-    {props.children} {(!!props.theme.rtl).toString()}
+    {props.children}
+    {(!!props.theme.rtl).toString()}
   </div>
 )
 
 const ContextPropNestingPerf = () => (
   <ThemeContext.Consumer>
     {theme => (
-      <ContextConsumer theme={theme}>
-        <ContextConsumer theme={theme}>
-          <ContextConsumer theme={theme}>
-            <ContextConsumer theme={theme}>
-              <ContextConsumer theme={theme}>
-                <ContextConsumer theme={theme}>
-                  <ContextConsumer theme={theme}>
-                    <ContextConsumer theme={theme}>
-                      <ContextConsumer theme={theme}>
-                        <ContextConsumer theme={theme}>
-                          <ContextConsumer theme={theme}>
-                            <ContextConsumer theme={theme}>
-                              <ContextConsumer theme={theme}>
-                                <ContextConsumer theme={theme}>
-                                  <ContextConsumer theme={theme}>
-                                    <ContextConsumer theme={theme}>
-                                      <ContextConsumer theme={theme}>
-                                        <ContextConsumer theme={theme}>
-                                          <ContextConsumer theme={theme}>
-                                            <ContextConsumer theme={theme}>
-                                              <ContextConsumer theme={theme}>
-                                                <ContextConsumer theme={theme}>
-                                                  <ContextConsumer theme={theme}>
-                                                    <ContextConsumer theme={theme}>
-                                                      <ContextConsumer theme={theme}>
-                                                        <ContextConsumer theme={theme}>
-                                                          <div />
-                                                        </ContextConsumer>
-                                                      </ContextConsumer>
-                                                    </ContextConsumer>
-                                                  </ContextConsumer>
-                                                </ContextConsumer>
-                                              </ContextConsumer>
-                                            </ContextConsumer>
-                                          </ContextConsumer>
-                                        </ContextConsumer>
-                                      </ContextConsumer>
-                                    </ContextConsumer>
-                                  </ContextConsumer>
-                                </ContextConsumer>
-                              </ContextConsumer>
-                            </ContextConsumer>
-                          </ContextConsumer>
-                        </ContextConsumer>
-                      </ContextConsumer>
-                    </ContextConsumer>
-                  </ContextConsumer>
-                </ContextConsumer>
-              </ContextConsumer>
-            </ContextConsumer>
-          </ContextConsumer>
-        </ContextConsumer>
-      </ContextConsumer>
+      <C theme={theme}>
+        <C theme={theme}>
+          <C theme={theme}>
+            <C theme={theme}>
+              <C theme={theme}>
+                <C theme={theme}>
+                  <C theme={theme}>
+                    <C theme={theme}>
+                      <C theme={theme}>
+                        <C theme={theme}>
+                          <C theme={theme}>
+                            <C theme={theme}>
+                              <C theme={theme}>
+                                <C theme={theme}>
+                                  <C theme={theme}>
+                                    <C theme={theme}>
+                                      <C theme={theme}>
+                                        <C theme={theme}>
+                                          <C theme={theme}>
+                                            <C theme={theme}>
+                                              <C theme={theme}>
+                                                <C theme={theme}>
+                                                  <C theme={theme}>
+                                                    <C theme={theme}>
+                                                      <C theme={theme}>
+                                                        <C theme={theme}>
+                                                          <C theme={theme}>
+                                                            <C theme={theme}>
+                                                              <C theme={theme}>
+                                                                <C theme={theme}>
+                                                                  <C theme={theme}>
+                                                                    <C theme={theme}>
+                                                                      <C theme={theme}>
+                                                                        <C theme={theme}>
+                                                                          <C theme={theme}>
+                                                                            <C theme={theme}>
+                                                                              <C theme={theme}>
+                                                                                <C theme={theme}>
+                                                                                  <C theme={theme}>
+                                                                                    <C
+                                                                                      theme={theme}
+                                                                                    >
+                                                                                      <C
+                                                                                        theme={
+                                                                                          theme
+                                                                                        }
+                                                                                      >
+                                                                                        <C
+                                                                                          theme={
+                                                                                            theme
+                                                                                          }
+                                                                                        >
+                                                                                          <C
+                                                                                            theme={
+                                                                                              theme
+                                                                                            }
+                                                                                          >
+                                                                                            <C
+                                                                                              theme={
+                                                                                                theme
+                                                                                              }
+                                                                                            >
+                                                                                              <C
+                                                                                                theme={
+                                                                                                  theme
+                                                                                                }
+                                                                                              >
+                                                                                                <C
+                                                                                                  theme={
+                                                                                                    theme
+                                                                                                  }
+                                                                                                >
+                                                                                                  <div />
+                                                                                                </C>
+                                                                                              </C>
+                                                                                            </C>
+                                                                                          </C>
+                                                                                        </C>
+                                                                                      </C>
+                                                                                    </C>
+                                                                                  </C>
+                                                                                </C>
+                                                                              </C>
+                                                                            </C>
+                                                                          </C>
+                                                                        </C>
+                                                                      </C>
+                                                                    </C>
+                                                                  </C>
+                                                                </C>
+                                                              </C>
+                                                            </C>
+                                                          </C>
+                                                        </C>
+                                                      </C>
+                                                    </C>
+                                                  </C>
+                                                </C>
+                                              </C>
+                                            </C>
+                                          </C>
+                                        </C>
+                                      </C>
+                                    </C>
+                                  </C>
+                                </C>
+                              </C>
+                            </C>
+                          </C>
+                        </C>
+                      </C>
+                    </C>
+                  </C>
+                </C>
+              </C>
+            </C>
+          </C>
+        </C>
+      </C>
     )}
   </ThemeContext.Consumer>
 )

@@ -12,7 +12,7 @@ const ContextConsumer = () => {
 
 const ContextUsePerf = () => (
   <>
-    {_.times(1000, key => (
+    {_.times(10000, key => (
       <ContextConsumer key={key} />
     ))}
   </>

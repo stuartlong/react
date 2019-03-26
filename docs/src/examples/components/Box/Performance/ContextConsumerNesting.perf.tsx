@@ -3,7 +3,7 @@ import * as React from 'react'
 // @ts-ignore
 import { ThemeContext } from 'react-fela'
 
-const ContextConsumer: React.FunctionComponent = props => (
+const C: React.FunctionComponent = props => (
   <ThemeContext.Consumer>
     {(theme: ThemeInput) => (
       <div>
@@ -15,59 +15,99 @@ const ContextConsumer: React.FunctionComponent = props => (
 )
 
 const ContextConsumerNestingPerf = () => (
-  <ContextConsumer>
-    <ContextConsumer>
-      <ContextConsumer>
-        <ContextConsumer>
-          <ContextConsumer>
-            <ContextConsumer>
-              <ContextConsumer>
-                <ContextConsumer>
-                  <ContextConsumer>
-                    <ContextConsumer>
-                      <ContextConsumer>
-                        <ContextConsumer>
-                          <ContextConsumer>
-                            <ContextConsumer>
-                              <ContextConsumer>
-                                <ContextConsumer>
-                                  <ContextConsumer>
-                                    <ContextConsumer>
-                                      <ContextConsumer>
-                                        <ContextConsumer>
-                                          <ContextConsumer>
-                                            <ContextConsumer>
-                                              <ContextConsumer>
-                                                <ContextConsumer>
-                                                  <ContextConsumer>
-                                                    <ContextConsumer>
-                                                      <div />
-                                                    </ContextConsumer>
-                                                  </ContextConsumer>
-                                                </ContextConsumer>
-                                              </ContextConsumer>
-                                            </ContextConsumer>
-                                          </ContextConsumer>
-                                        </ContextConsumer>
-                                      </ContextConsumer>
-                                    </ContextConsumer>
-                                  </ContextConsumer>
-                                </ContextConsumer>
-                              </ContextConsumer>
-                            </ContextConsumer>
-                          </ContextConsumer>
-                        </ContextConsumer>
-                      </ContextConsumer>
-                    </ContextConsumer>
-                  </ContextConsumer>
-                </ContextConsumer>
-              </ContextConsumer>
-            </ContextConsumer>
-          </ContextConsumer>
-        </ContextConsumer>
-      </ContextConsumer>
-    </ContextConsumer>
-  </ContextConsumer>
+  <C>
+    <C>
+      <C>
+        <C>
+          <C>
+            <C>
+              <C>
+                <C>
+                  <C>
+                    <C>
+                      <C>
+                        <C>
+                          <C>
+                            <C>
+                              <C>
+                                <C>
+                                  <C>
+                                    <C>
+                                      <C>
+                                        <C>
+                                          <C>
+                                            <C>
+                                              <C>
+                                                <C>
+                                                  <C>
+                                                    <C>
+                                                      <C>
+                                                        <C>
+                                                          <C>
+                                                            <C>
+                                                              <C>
+                                                                <C>
+                                                                  <C>
+                                                                    <C>
+                                                                      <C>
+                                                                        <C>
+                                                                          <C>
+                                                                            <C>
+                                                                              <C>
+                                                                                <C>
+                                                                                  <C>
+                                                                                    <C>
+                                                                                      <C>
+                                                                                        <C>
+                                                                                          <C>
+                                                                                            <C>
+                                                                                              <div />
+                                                                                            </C>
+                                                                                          </C>
+                                                                                        </C>
+                                                                                      </C>
+                                                                                    </C>
+                                                                                  </C>
+                                                                                </C>
+                                                                              </C>
+                                                                            </C>
+                                                                          </C>
+                                                                        </C>
+                                                                      </C>
+                                                                    </C>
+                                                                  </C>
+                                                                </C>
+                                                              </C>
+                                                            </C>
+                                                          </C>
+                                                        </C>
+                                                      </C>
+                                                    </C>
+                                                  </C>
+                                                </C>
+                                              </C>
+                                            </C>
+                                          </C>
+                                        </C>
+                                      </C>
+                                    </C>
+                                  </C>
+                                </C>
+                              </C>
+                            </C>
+                          </C>
+                        </C>
+                      </C>
+                    </C>
+                  </C>
+                </C>
+              </C>
+            </C>
+          </C>
+        </C>
+      </C>
+    </C>
+  </C>
 )
 
 export default ContextConsumerNestingPerf

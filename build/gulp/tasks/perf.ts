@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as fs from 'fs'
 import { task, series } from 'gulp'
 import * as _ from 'lodash'
+import * as ProgressBar from 'progress'
 import * as puppeteer from 'puppeteer'
 import * as rimraf from 'rimraf'
 import { argv } from 'yargs'
@@ -132,6 +133,8 @@ task('perf:run', async () => {
   const times = (argv.times as string) || DEFAULT_RUN_TIMES
   const filter = argv.filter
 
+  const bar = new ProgressBar(':bar :current/:total', { total: times })
+
   let browser
 
   try {
@@ -148,6 +151,7 @@ task('perf:run', async () => {
 
       const measuresFromStep = await page.evaluate(filter => window.runMeasures(filter), filter)
       measures.push(measuresFromStep)
+      bar.tick()
 
       await page.close()
     }

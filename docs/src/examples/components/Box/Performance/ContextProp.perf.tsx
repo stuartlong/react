@@ -12,7 +12,7 @@ const ContextProp = () => (
   <ThemeContext.Consumer>
     {theme => (
       <>
-        {_.times(1000, key => (
+        {_.times(10000, key => (
           <ContextConsumer key={key} theme={theme} />
         ))}
       </>
