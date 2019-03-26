@@ -72,6 +72,53 @@ const normalizeMeasures = (measures: ProfilerMeasureCycle[]) => {
   }))
 }
 
+const getPercentDiff = (minValue: number, actualValue: number): number =>
+  _.round((actualValue / minValue) * 100 - 100, 2)
+
+const createMarkdownTable = (
+  data,
+  metricName: string = 'actualTime',
+  fields: string[] = ['avg', 'median'],
+) => {
+  const exampleMeasures = _.mapValues(data, exampleMeasure => exampleMeasure[metricName])
+
+  const fieldLabels: string[] = _.flatMap(fields, field => [
+    _.capitalize(field),
+    `${_.capitalize(field)} diff`,
+  ])
+  const minFieldValues: Record<string, number> = _.zipObject(
+    fields,
+    _.map(fields, fieldName => _.min(_.map(exampleMeasures, fieldName))),
+  )
+  const fieldValues = _.mapValues(exampleMeasures, exampleMeasure =>
+    _.reduce(
+      exampleMeasure,
+      (result, value, field) => {
+        if (_.includes(fields, field)) {
+          const minValue = minFieldValues[field]
+          const percentDiff =
+            minValue === value ? `**${value}**` : `+${getPercentDiff(minValue, value)}%`
+
+          result.push(value, percentDiff)
+        }
+
+        return result
+      },
+      [],
+    ),
+  )
+
+  return [
+    `| Example | ${fieldLabels.join(' | ')} |`,
+    `| --- | ${_.map(fieldLabels, () => ' --- ').join(' | ')} |`,
+    ..._.map(
+      exampleMeasures,
+      (exampleMeasure, exampleName) =>
+        `| ${exampleName} | ${fieldValues[exampleName].join(' | ')} |`,
+    ),
+  ].join('\n')
+}
+
 task('perf:clean', cb => {
   rimraf(paths.perfDist(), cb)
 })
@@ -111,9 +158,12 @@ task('perf:run', async () => {
   }
 
   const resultsFile = paths.perfDist('result.json')
+  const normalizedMeasures = normalizeMeasures(measures)
 
-  fs.writeFileSync(resultsFile, JSON.stringify(normalizeMeasures(measures), null, 2))
+  fs.writeFileSync(resultsFile, JSON.stringify(normalizedMeasures, null, 2))
+
   log(colors.green('Results are written to "%s"'), resultsFile)
+  console.log(createMarkdownTable(normalizedMeasures))
 })
 
 task('perf:serve', cb => {

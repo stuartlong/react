@@ -1,5 +1,6 @@
 import { Provider, themes } from '@stardust-ui/react'
 import * as _ from 'lodash'
+import * as minimatch from 'minimatch'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
@@ -61,9 +62,10 @@ const renderCycle = async (
   return profilerMeasure
 }
 
-const satisfiesFilter = (componentName: string, filter: string) => {
-  return componentName.toLowerCase().startsWith(filter.toLowerCase())
-}
+const satisfiesFilter = (componentName: string, filter: string) =>
+  minimatch(componentName, filter || '*', {
+    matchBase: true,
+  })
 
 window.runMeasures = async (filter: string = '') => {
   const performanceMeasures: ProfilerMeasureCycle = {}
