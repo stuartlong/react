@@ -4,7 +4,7 @@ import * as React from 'react'
 // @ts-ignore
 import { ThemeContext } from 'react-fela'
 
-const ContextConsumer: React.FunctionComponent<{ theme: ThemeInput }> = props => (
+const C: React.FunctionComponent<{ theme: ThemeInput }> = props => (
   <div>{(!!props.theme.rtl).toString()}</div>
 )
 
@@ -13,7 +13,7 @@ const ContextProp = () => (
     {theme => (
       <>
         {_.times(10000, key => (
-          <ContextConsumer key={key} theme={theme} />
+          <C key={key} theme={theme} />
         ))}
       </>
     )}

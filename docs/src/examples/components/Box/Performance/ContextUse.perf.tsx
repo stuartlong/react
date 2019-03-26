@@ -4,7 +4,7 @@ import * as React from 'react'
 // @ts-ignore
 import { ThemeContext } from 'react-fela'
 
-const ContextConsumer = () => {
+const C = () => {
   const theme = React.useContext<ThemeInput>(ThemeContext)
 
   return <div>{(!!theme.rtl).toString()}</div>
@@ -13,7 +13,7 @@ const ContextConsumer = () => {
 const ContextUsePerf = () => (
   <>
     {_.times(10000, key => (
-      <ContextConsumer key={key} />
+      <C key={key} />
     ))}
   </>
 )
