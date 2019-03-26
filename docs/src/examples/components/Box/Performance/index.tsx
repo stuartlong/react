@@ -6,15 +6,25 @@ import NonPublicSection from 'docs/src/components/ComponentDoc/NonPublicSection'
 const Performance = () => (
   <NonPublicSection title="Performance">
     <ComponentExample
-      title="Default"
-      description="A default test."
-      examplePath="components/Header/Performance/Header.perf"
+      title="Context.Consumer"
+      description="An approach with Context.Consumer."
+      examplePath="components/Box/Performance/ContextConsumer.perf"
     />
+    <ComponentExample examplePath="components/Box/Performance/ContextConsumerNesting.perf" />
+
     <ComponentExample
-      title="Default"
-      description="A test with a description shorthand."
-      examplePath="components/Header/Performance/HeaderDescription.perf"
+      title="useContext()"
+      description="An approach with useContext() hook."
+      examplePath="components/Box/Performance/ContextUse.perf"
     />
+    <ComponentExample examplePath="components/Box/Performance/ContextUseNesting.perf" />
+
+    <ComponentExample
+      title="Direct prop"
+      description="An approach with passing prop directly to component."
+      examplePath="components/Box/Performance/ContextProp.perf"
+    />
+    <ComponentExample examplePath="components/Box/Performance/ContextPropNesting.perf" />
   </NonPublicSection>
 )
 

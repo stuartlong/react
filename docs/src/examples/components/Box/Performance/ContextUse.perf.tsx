@@ -4,20 +4,18 @@ import * as React from 'react'
 // @ts-ignore
 import { ThemeContext } from 'react-fela'
 
-const ContextConsumer: React.FunctionComponent<{ theme: ThemeInput }> = props => (
-  <div>{(!!props.theme.rtl).toString()}</div>
+const ContextConsumer = () => {
+  const theme = React.useContext<ThemeInput>(ThemeContext)
+
+  return <div>{(!!theme.rtl).toString()}</div>
+}
+
+const ContextUsePerf = () => (
+  <>
+    {_.times(1000, key => (
+      <ContextConsumer key={key} />
+    ))}
+  </>
 )
 
-const ContextConsumerUse = () => (
-  <ThemeContext.Consumer>
-    {theme => (
-      <>
-        {_.times(1000, key => (
-          <ContextConsumer key={key} theme={theme} />
-        ))}
-      </>
-    )}
-  </ThemeContext.Consumer>
-)
-
-export default ContextConsumerUse
+export default ContextUsePerf
