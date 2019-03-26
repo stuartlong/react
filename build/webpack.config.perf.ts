@@ -59,6 +59,11 @@ const webpackConfig: any = {
       ...lernaAliases(),
       docs: paths.base('docs'),
       src: paths.packageSrc('react'),
+
+      // We are React in production mode with tracing.
+      // https://gist.github.com/bvaughn/25e6233aeb1b4f0cdb8d8366e54a3977
+      'react-dom$': 'react-dom/profiling',
+      'scheduler/tracing': 'scheduler/tracing-profiling',
     },
   },
   performance: {
